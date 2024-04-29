@@ -124,7 +124,8 @@ class Converter:
             '.--.-.': '@',
             '': ' '
         }  # Dictionary of morse codes and their character equivalent
-        mixer.init()  # Initializes the pygame mixer
+        self.mixer = mixer
+        self.mixer.init()  # Initializes the pygame mixer
         self.SILENCE_DURATION = 0.2  # Duration of silence between sounds (in seconds)
 
     def text_to_morse(self, text) -> str:
@@ -144,7 +145,6 @@ class Converter:
 
     def play_morse_audio(self, morse_code):
         """Plays the sound for a morse code sequence"""
-        mixer.init()  # Initializes the Pygame mixer
         for char in morse_code:
             if char == '-':
                 winsound.Beep(frequency=800, duration=400)  # Plays the dash (-) sound
@@ -175,12 +175,12 @@ class Converter:
         speech_stream.truncate(0)  # Discards all previous data written to the BytesIO stream (if any)
         tts.write_to_fp(speech_stream)  # Write the speech data from the gTTS to the BytesIO stream
         speech_stream.seek(0)  # Return stream cursor to the beginning of the text
-        mixer.music.load(speech_stream)  # Loads speech stream (BytesIO) into the Pygame mixer
-        mixer.music.play()  # Plays the loaded speech
+        self.mixer.music.load(speech_stream)  # Loads speech stream (BytesIO) into the Pygame mixer
+        self.mixer.music.play()  # Plays the loaded speech
         time.sleep(self.SILENCE_DURATION)  # Wait for specified number of seconds (optional) !irrelevant!
 
         # Wait until speech finishes playing
-        while mixer.music.get_busy():  # Returns true while playing audio
+        while self.mixer.music.get_busy():  # Returns true while playing audio
             pygame.time.Clock().tick(60)
 
     def is_morse_code(self, morse_code) -> bool:
